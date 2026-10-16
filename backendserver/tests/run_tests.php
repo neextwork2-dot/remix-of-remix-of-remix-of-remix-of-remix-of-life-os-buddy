@@ -167,17 +167,17 @@ check('C flushed event when cap exhausted', count($cFlush) >= 1, 'got ' . count(
 
 // ---- Withdrawals ----
 $waBefore = api('GET', '/api/member/wallet', null, $tokenA)['json']['data'];
-$r = api('POST', '/api/member/withdrawals', ['amount' => 400, 'method' => 'bkash', 'account_number' => '01700000001'], $tokenA);
+$r = api('POST', '/api/member/withdrawals', ['amount' => 400, 'method' => 'bkash', 'account_number' => '01700000002'], $B['token']);
 check('withdrawal below minimum 500 rejected', $r['status'] === 400, (string) $r['status']);
-$r = api('POST', '/api/member/withdrawals', ['amount' => 500, 'method' => 'bkash', 'account_number' => '01700000001'], $tokenA);
+$r = api('POST', '/api/member/withdrawals', ['amount' => 500, 'method' => 'bkash', 'account_number' => '01700000002'], $B['token']);
 check('withdrawal 500 created PENDING', $r['status'] === 200 && ($r['json']['data']['status'] ?? '') === 'PENDING', $r['raw']);
 $wdId = $r['json']['data']['withdrawal_id'] ?? 0;
 $r = api('GET', '/api/admin/withdrawals', null, $adminToken);
 check('admin sees pending withdrawal', $r['status'] === 200 && count($r['json']['data'] ?? []) >= 1, 'got ' . count($r['json']['data'] ?? []));
 $r = api('POST', "/api/admin/withdrawals/$wdId/process", ['status' => 'APPROVED', 'note' => 'paid'], $adminToken);
 check('admin approves withdrawal', $r['status'] === 200, $r['raw']);
-$wa = api('GET', '/api/member/wallet', null, $tokenA)['json']['data'];
-check('wallet reflects 500 withdrawn', abs($wa['withdrawn'] - 500.0) < 0.01, 'got ' . $wa['withdrawn']);
+$wb2 = api('GET', '/api/member/wallet', null, $B['token'])['json']['data'];
+check('wallet reflects 500 withdrawn', abs(($wb2['withdrawn'] ?? 0) - 500.0) < 0.01, 'got ' . ($wb2['withdrawn'] ?? 'none'));
 
 // ---- Access boundaries ----
 $r = api('GET', '/api/admin/overview', null, $tokenA);
