@@ -14,6 +14,15 @@ const cpanelRouterBasePath = cpanelBasePath.replace(/\/$/, "") || "/";
 export default defineConfig({
   vite: {
     base: isCpanelBuild ? cpanelBasePath : "/",
+    server: {
+      proxy: {
+        "/backendserver/api": {
+          target: "http://127.0.0.1:8090",
+          changeOrigin: true,
+          rewrite: (path: string) => path.replace(/^\/backendserver/, ""),
+        },
+      },
+    },
   },
   nitro: {
     preset: isCpanelBuild || isNetlifyBuild ? "cloudflare-module" : "netlify",

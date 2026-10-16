@@ -37,6 +37,7 @@ $router->post('/api/member/register', function () {
              password_hash((string) $b['pin'], PASSWORD_DEFAULT), !empty($b['accepted_terms']) ? 1 : 0]
         );
         DB::insert('INSERT INTO user_wallets (user_id) VALUES (?)', [$id]);
+        DB::insert('INSERT INTO user_profiles (user_id, name) VALUES (?, ?)', [$id, trim((string) $b['name'])]);
         Placement::ensureNode($id, $sponsorId);
         Placement::place($id, $sponsorId);
         return $id;
@@ -56,6 +57,45 @@ $router->post('/api/member/login', function () {
 });
 
 // ---- Dashboard ----
+$router->get('/api/member/profile', function () {
+    $u = Auth::member();
+    Http::ok(DB::one('SELECT name, father_name, mother_name, nominee_name, nominee_relation, dob, blood_group, phone_alt, address_current FROM user_profiles WHERE user_id = ? ORDER BY id LIMIT 1', [(int) $u['id']]) ?? []);
+});
+
+$router->post('/api/member/profile', function () {
+    $u = Auth::member();
+    $b = Http::body();
+    $fields = ['name', 'father_name', 'mother_name', 'nominee_name', 'nominee_relation', 'dob', 'blood_group', 'phone_alt', 'address_current'];
+    $values = [];
+    foreach ($fields as $field) {
+        $value = trim((string) ($b[$field] ?? ''));
+        if (strlen($value) > ($field === 'address_current' ? 2000 : 100)) throw new HttpError("$field is too long");
+        $values[] = $value === '' ? null : $value;
+    }
+    if (!$values[0]) throw new HttpError('Full name required');
+    if ($values[5] !== null && (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $values[5]) || date('Y-m-d', strtotime($values[5]) ?: 0) !== $values[5])) throw new HttpError('Valid birth date required');
+    DB::tx(function () use ($u, $fields, $values) {
+        DB::one('SELECT id FROM users WHERE id = ? FOR UPDATE', [(int) $u['id']]);
+        $profile = DB::one('SELECT id FROM user_profiles WHERE user_id = ? ORDER BY id LIMIT 1', [(int) $u['id']]);
+        if ($profile) {
+            DB::run('UPDATE user_profiles SET ' . implode(', ', array_map(fn($f) => "$f = ?", $fields)) . ' WHERE id = ?', [...$values, (int) $profile['id']]);
+        } else {
+            DB::insert('INSERT INTO user_profiles (user_id, ' . implode(', ', $fields) . ') VALUES (' . implode(',', array_fill(0, count($fields) + 1, '?')) . ')', [(int) $u['id'], ...$values]);
+        }
+    });
+    Http::ok(['saved' => true]);
+});
+
+$router->post('/api/member/password', function () {
+    $u = Auth::member();
+    $b = Http::body();
+    if (!password_verify((string) ($b['current_password'] ?? ''), (string) $u['pin_hash'])) throw new HttpError('Current password is incorrect', 403);
+    $password = (string) ($b['new_password'] ?? '');
+    if (strlen($password) < 6 || strlen($password) > 72) throw new HttpError('New password must be 6–72 characters');
+    DB::run('UPDATE users SET pin_hash = ? WHERE id = ?', [password_hash($password, PASSWORD_DEFAULT), (int) $u['id']]);
+    Http::ok(['changed' => true]);
+});
+
 $router->get('/api/member/me', function () {
     Http::ok(memberSummary(Auth::member()));
 });
@@ -188,8 +228,13 @@ function memberSummary(array $u): array
 {
     $uid = (int) $u['id'];
     $tree = DB::one('SELECT * FROM lo_tree WHERE user_id = ?', [$uid]);
+    $profile = DB::one('SELECT name FROM user_profiles WHERE user_id = ? ORDER BY id LIMIT 1', [$uid]);
     return [
         'id' => $uid,
+        'name' => $profile['name'] ?? $u['life_id'],
+        'created_at' => $u['created_at'],
+        'referred_by' => $u['referred_by'],
+        'total_referral' => (int) DB::val('SELECT COUNT(*) FROM lo_tree WHERE sponsor_id = ?', [$uid]),
         'life_id' => $u['life_id'],
         'referral_code' => $u['referral_code'],
         'phone' => $u['phone'],
