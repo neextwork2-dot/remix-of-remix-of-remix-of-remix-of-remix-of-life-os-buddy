@@ -50,14 +50,22 @@ final class DB
     public static function val(string $sql, array $p = []): mixed { $s = self::pdo()->prepare($sql); $s->execute($p); return $s->fetchColumn(); }
     public static function run(string $sql, array $p = []): int { $s = self::pdo()->prepare($sql); $s->execute($p); return $s->rowCount(); }
     public static function insert(string $sql, array $p = []): int { self::run($sql, $p); return (int) self::pdo()->lastInsertId(); }
-    /** Runs $fn in a transaction; rolls back on any error. */
+    /** Runs $fn in a transaction; rolls back on any error. Safe to nest (uses savepoints). */
     public static function tx(callable $fn): mixed
     {
         $pdo = self::pdo();
+        if ($pdo->inTransaction()) {
+            $level = ++self::$txLevel;
+            $pdo->exec("SAVEPOINT sp_$level");
+            try { $r = $fn(); $pdo->exec("RELEASE SAVEPOINT sp_$level"); return $r; }
+            catch (\Throwable $e) { $pdo->exec("ROLLBACK TO SAVEPOINT sp_$level"); throw $e; }
+            finally { self::$txLevel--; }
+        }
         $pdo->beginTransaction();
         try { $r = $fn(); $pdo->commit(); return $r; }
         catch (\Throwable $e) { $pdo->rollBack(); throw $e; }
     }
+    private static int $txLevel = 0;
 }
 
 final class Http
