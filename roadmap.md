@@ -1,3 +1,11 @@
+# Member panel and external server
+- [ ] Inspect supplied dashboard kit, legacy source, marketing plan and SQL reference.
+- [ ] Resolve conflicting rank thresholds and confirm external PHP/MySQL hosting requirements.
+- [ ] Match the member panel to the supplied kit without exposing marketing information publicly.
+- [ ] Prepare backendserver PHP REST API and migration-compatible MySQL schema.
+- [ ] Add audited, restricted deployment and database management with signed updates and rollback.
+- [ ] Test financial rules, login, access boundaries and server deployment; live checks require host access.
+
 # Clone website
 - [x] Copy original pages, styling and photos.
 - [x] Add transparent Life OS logo at the top-right of news/event photos and their image viewer.
