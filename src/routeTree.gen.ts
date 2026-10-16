@@ -27,6 +27,7 @@ import { Route as HalalCertificatesRouteImport } from './routes/halal-certificat
 import { Route as JoinUsRouteImport } from './routes/join-us'
 import { Route as LatestEventRouteImport } from './routes/latest-event'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as MemberRouteImport } from './routes/member'
 import { Route as MilestonesRouteImport } from './routes/milestones'
 import { Route as NewsEventsRouteImport } from './routes/news-events'
 import { Route as PhotoGalleryRouteImport } from './routes/photo-gallery'
@@ -35,6 +36,11 @@ import { Route as ScientistsRouteImport } from './routes/scientists'
 import { Route as SeniorManagementRouteImport } from './routes/senior-management'
 import { Route as TripleStemcellH2oRouteImport } from './routes/triple-stemcell-h2o'
 import { Route as VideoGalleryRouteImport } from './routes/video-gallery'
+import { Route as MemberIndexRouteImport } from './routes/member.index'
+import { Route as MemberChangePasswordRouteImport } from './routes/member.change-password'
+import { Route as MemberCommissionRouteImport } from './routes/member.commission'
+import { Route as MemberNoticeRouteImport } from './routes/member.notice'
+import { Route as MemberProfileRouteImport } from './routes/member.profile'
 import { Route as ServicesSlugRouteImport } from './routes/services.$slug'
 
 const IndexRoute = IndexRouteImport.update({
@@ -127,6 +133,11 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MemberRoute = MemberRouteImport.update({
+  id: '/member',
+  path: '/member',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MilestonesRoute = MilestonesRouteImport.update({
   id: '/milestones',
   path: '/milestones',
@@ -167,6 +178,31 @@ const VideoGalleryRoute = VideoGalleryRouteImport.update({
   path: '/video-gallery',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MemberIndexRoute = MemberIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => MemberRoute,
+} as any)
+const MemberChangePasswordRoute = MemberChangePasswordRouteImport.update({
+  id: '/change-password',
+  path: '/change-password',
+  getParentRoute: () => MemberRoute,
+} as any)
+const MemberCommissionRoute = MemberCommissionRouteImport.update({
+  id: '/commission',
+  path: '/commission',
+  getParentRoute: () => MemberRoute,
+} as any)
+const MemberNoticeRoute = MemberNoticeRouteImport.update({
+  id: '/notice',
+  path: '/notice',
+  getParentRoute: () => MemberRoute,
+} as any)
+const MemberProfileRoute = MemberProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => MemberRoute,
+} as any)
 const ServicesSlugRoute = ServicesSlugRouteImport.update({
   id: '/services/$slug',
   path: '/services/$slug',
@@ -192,6 +228,7 @@ export interface FileRoutesByFullPath {
   '/join-us': typeof JoinUsRoute
   '/latest-event': typeof LatestEventRoute
   '/login': typeof LoginRoute
+  '/member': typeof MemberRouteWithChildren
   '/milestones': typeof MilestonesRoute
   '/news-events': typeof NewsEventsRoute
   '/photo-gallery': typeof PhotoGalleryRoute
@@ -200,7 +237,12 @@ export interface FileRoutesByFullPath {
   '/senior-management': typeof SeniorManagementRoute
   '/triple-stemcell-h2o': typeof TripleStemcellH2oRoute
   '/video-gallery': typeof VideoGalleryRoute
+  '/member/change-password': typeof MemberChangePasswordRoute
+  '/member/commission': typeof MemberCommissionRoute
+  '/member/notice': typeof MemberNoticeRoute
+  '/member/profile': typeof MemberProfileRoute
   '/services/$slug': typeof ServicesSlugRoute
+  '/member/': typeof MemberIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -229,7 +271,12 @@ export interface FileRoutesByTo {
   '/senior-management': typeof SeniorManagementRoute
   '/triple-stemcell-h2o': typeof TripleStemcellH2oRoute
   '/video-gallery': typeof VideoGalleryRoute
+  '/member/change-password': typeof MemberChangePasswordRoute
+  '/member/commission': typeof MemberCommissionRoute
+  '/member/notice': typeof MemberNoticeRoute
+  '/member/profile': typeof MemberProfileRoute
   '/services/$slug': typeof ServicesSlugRoute
+  '/member': typeof MemberIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -251,6 +298,7 @@ export interface FileRoutesById {
   '/join-us': typeof JoinUsRoute
   '/latest-event': typeof LatestEventRoute
   '/login': typeof LoginRoute
+  '/member': typeof MemberRouteWithChildren
   '/milestones': typeof MilestonesRoute
   '/news-events': typeof NewsEventsRoute
   '/photo-gallery': typeof PhotoGalleryRoute
@@ -259,7 +307,12 @@ export interface FileRoutesById {
   '/senior-management': typeof SeniorManagementRoute
   '/triple-stemcell-h2o': typeof TripleStemcellH2oRoute
   '/video-gallery': typeof VideoGalleryRoute
+  '/member/change-password': typeof MemberChangePasswordRoute
+  '/member/commission': typeof MemberCommissionRoute
+  '/member/notice': typeof MemberNoticeRoute
+  '/member/profile': typeof MemberProfileRoute
   '/services/$slug': typeof ServicesSlugRoute
+  '/member/': typeof MemberIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -282,6 +335,7 @@ export interface FileRouteTypes {
     | '/join-us'
     | '/latest-event'
     | '/login'
+    | '/member'
     | '/milestones'
     | '/news-events'
     | '/photo-gallery'
@@ -290,7 +344,12 @@ export interface FileRouteTypes {
     | '/senior-management'
     | '/triple-stemcell-h2o'
     | '/video-gallery'
+    | '/member/change-password'
+    | '/member/commission'
+    | '/member/notice'
+    | '/member/profile'
     | '/services/$slug'
+    | '/member/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -319,7 +378,12 @@ export interface FileRouteTypes {
     | '/senior-management'
     | '/triple-stemcell-h2o'
     | '/video-gallery'
+    | '/member/change-password'
+    | '/member/commission'
+    | '/member/notice'
+    | '/member/profile'
     | '/services/$slug'
+    | '/member'
   id:
     | '__root__'
     | '/'
@@ -340,6 +404,7 @@ export interface FileRouteTypes {
     | '/join-us'
     | '/latest-event'
     | '/login'
+    | '/member'
     | '/milestones'
     | '/news-events'
     | '/photo-gallery'
@@ -348,7 +413,12 @@ export interface FileRouteTypes {
     | '/senior-management'
     | '/triple-stemcell-h2o'
     | '/video-gallery'
+    | '/member/change-password'
+    | '/member/commission'
+    | '/member/notice'
+    | '/member/profile'
     | '/services/$slug'
+    | '/member/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -370,6 +440,7 @@ export interface RootRouteChildren {
   JoinUsRoute: typeof JoinUsRoute
   LatestEventRoute: typeof LatestEventRoute
   LoginRoute: typeof LoginRoute
+  MemberRoute: typeof MemberRouteWithChildren
   MilestonesRoute: typeof MilestonesRoute
   NewsEventsRoute: typeof NewsEventsRoute
   PhotoGalleryRoute: typeof PhotoGalleryRoute
@@ -509,6 +580,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/member': {
+      id: '/member'
+      path: '/member'
+      fullPath: '/member'
+      preLoaderRoute: typeof MemberRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/milestones': {
       id: '/milestones'
       path: '/milestones'
@@ -565,6 +643,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VideoGalleryRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/member/': {
+      id: '/member/'
+      path: '/'
+      fullPath: '/member/'
+      preLoaderRoute: typeof MemberIndexRouteImport
+      parentRoute: typeof MemberRoute
+    }
+    '/member/change-password': {
+      id: '/member/change-password'
+      path: '/change-password'
+      fullPath: '/member/change-password'
+      preLoaderRoute: typeof MemberChangePasswordRouteImport
+      parentRoute: typeof MemberRoute
+    }
+    '/member/commission': {
+      id: '/member/commission'
+      path: '/commission'
+      fullPath: '/member/commission'
+      preLoaderRoute: typeof MemberCommissionRouteImport
+      parentRoute: typeof MemberRoute
+    }
+    '/member/notice': {
+      id: '/member/notice'
+      path: '/notice'
+      fullPath: '/member/notice'
+      preLoaderRoute: typeof MemberNoticeRouteImport
+      parentRoute: typeof MemberRoute
+    }
+    '/member/profile': {
+      id: '/member/profile'
+      path: '/profile'
+      fullPath: '/member/profile'
+      preLoaderRoute: typeof MemberProfileRouteImport
+      parentRoute: typeof MemberRoute
+    }
     '/services/$slug': {
       id: '/services/$slug'
       path: '/services/$slug'
@@ -574,6 +687,25 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface MemberRouteChildren {
+  MemberChangePasswordRoute: typeof MemberChangePasswordRoute
+  MemberCommissionRoute: typeof MemberCommissionRoute
+  MemberNoticeRoute: typeof MemberNoticeRoute
+  MemberProfileRoute: typeof MemberProfileRoute
+  MemberIndexRoute: typeof MemberIndexRoute
+}
+
+const MemberRouteChildren: MemberRouteChildren = {
+  MemberChangePasswordRoute: MemberChangePasswordRoute,
+  MemberCommissionRoute: MemberCommissionRoute,
+  MemberNoticeRoute: MemberNoticeRoute,
+  MemberProfileRoute: MemberProfileRoute,
+  MemberIndexRoute: MemberIndexRoute,
+}
+
+const MemberRouteWithChildren =
+  MemberRoute._addFileChildren(MemberRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -594,6 +726,7 @@ const rootRouteChildren: RootRouteChildren = {
   JoinUsRoute: JoinUsRoute,
   LatestEventRoute: LatestEventRoute,
   LoginRoute: LoginRoute,
+  MemberRoute: MemberRouteWithChildren,
   MilestonesRoute: MilestonesRoute,
   NewsEventsRoute: NewsEventsRoute,
   PhotoGalleryRoute: PhotoGalleryRoute,
