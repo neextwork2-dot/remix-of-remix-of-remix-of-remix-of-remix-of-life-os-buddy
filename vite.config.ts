@@ -6,8 +6,55 @@
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
+const isCpanelBuild = process.env["LIFE_OS_TARGET"] === "cpanel";
+const isNetlifyBuild = process.env["LIFE_OS_TARGET"] === "netlify";
+const cpanelBasePath = process.env["CPANEL_BASE_PATH"] ?? "/";
+const cpanelRouterBasePath = cpanelBasePath.replace(/\/$/, "") || "/";
+
 export default defineConfig({
+  vite: {
+    base: isCpanelBuild ? cpanelBasePath : "/",
+  },
+  nitro: {
+    preset: isCpanelBuild || isNetlifyBuild ? "cloudflare-module" : "netlify",
+    ...(isCpanelBuild
+      ? {
+          output: {
+            dir: ".output",
+            serverDir: ".output/server",
+            publicDir: "dist",
+          },
+        }
+      : isNetlifyBuild
+        ? {
+            output: {
+              dir: ".output-netlify",
+              serverDir: ".output-netlify/server",
+              publicDir: "dist-netlify",
+            },
+          }
+        : {}),
+  },
   tanstackStart: {
+    ...(isCpanelBuild || isNetlifyBuild
+      ? {
+          ...(isCpanelBuild
+            ? {
+                router: {
+                  basepath: cpanelRouterBasePath,
+                },
+              }
+            : {}),
+          prerender: {
+            enabled: true,
+            crawlLinks: true,
+            autoStaticPathsDiscovery: true,
+            failOnError: true,
+            filter: ({ path }: { path: string }) =>
+              !path.startsWith("/assets/") && !path.startsWith(`${cpanelBasePath}assets/`),
+          },
+        }
+      : {}),
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this
     server: { entry: "server" },
