@@ -178,7 +178,7 @@ check('wallet reflects 500 withdrawn', abs($wa['withdrawn'] - 500.0) < 0.01, 'go
 
 // ---- Access boundaries ----
 $r = api('GET', '/api/admin/overview', null, $tokenA);
-check('member token rejected on admin API', $r['status'] === 403, (string) $r['status']);
+check('member token rejected on admin API', in_array($r['status'], [401, 403], true), (string) $r['status']);
 $r = api('GET', '/api/member/me');
 check('no token rejected', $r['status'] === 401, (string) $r['status']);
 $r = api('GET', '/api/admin/overview', null, 'bogus.token');

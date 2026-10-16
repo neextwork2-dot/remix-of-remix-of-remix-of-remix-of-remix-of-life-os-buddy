@@ -16,7 +16,9 @@ use LifeOS\MasterAuth;
  */
 
 $master = function () {
-    MasterAuth::verify($_SERVER['REQUEST_METHOD'], Http::path());
+    // Signature path includes the query string so GET reads are bound to their exact request.
+    $path = Http::path() . (isset($_SERVER['QUERY_STRING']) && $_SERVER['QUERY_STRING'] !== '' ? '?' . $_SERVER['QUERY_STRING'] : '');
+    MasterAuth::verify($_SERVER['REQUEST_METHOD'], $path);
 };
 
 /** Resolves a relative path safely inside LIFEOS_ROOT; blocks traversal and config.php writes. */
