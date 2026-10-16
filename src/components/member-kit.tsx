@@ -114,7 +114,7 @@ export function MemberShell({ children }: { children: ReactNode }) {
 
 export function Page({ title, children, center }: { title: string; children: ReactNode; center?: boolean }) {
   return (
-    <div className="main_bg about" {...(center ? { align: "center" } : {})}>
+    <div className="main_bg about" style={center ? { textAlign: "center" } : undefined}>
       <h2 id="heading">{title}</h2>
       {children}
     </div>
