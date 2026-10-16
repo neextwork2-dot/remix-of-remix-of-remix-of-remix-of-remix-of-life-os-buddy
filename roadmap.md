@@ -1,10 +1,9 @@
 # Member panel and external server
-- [ ] Inspect supplied dashboard kit, legacy source, marketing plan and SQL reference.
-- [ ] Resolve conflicting rank thresholds and confirm external PHP/MySQL hosting requirements.
-- [ ] Match the member panel to the supplied kit without exposing marketing information publicly.
-- [ ] Prepare backendserver PHP REST API and migration-compatible MySQL schema.
-- [ ] Add audited, restricted deployment and database management with signed updates and rollback.
-- [ ] Test financial rules, login, access boundaries and server deployment; live checks require host access.
+- [ ] Resolve conflicting rank thresholds (1,000-matchings rank name) and generation-1 recipient; confirm external PHP/MySQL hosting URL for live checks.
+- [ ] Build the member panel to match the supplied dashboard kit (blocked: kit not uploaded in this workspace).
+- [x] Prepare backendserver PHP REST API and migration-compatible MySQL schema.
+- [x] Add audited, restricted deployment and database management with signed updates and rollback.
+- [x] Test financial rules, login, access boundaries and server deployment (50/50 checks pass; live-server checks still need host access).
 
 # Clone website
 - [x] Copy original pages, styling and photos.

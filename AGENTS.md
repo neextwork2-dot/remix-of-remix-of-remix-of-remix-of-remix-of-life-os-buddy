@@ -17,3 +17,6 @@
 - Mobile navigation uses explicitly toggled, vertically scrolling submenus within the shared reference header; shared mobile-shell overrides have greater specificity than imported desktop rules to prevent off-screen menus.
 - Store generated narration as shared media and replay it with native audio controls; playback must not generate another recording.
 - Contact and joining enquiries prepare email drafts with explicit status messages, rather than claiming unsent forms have been delivered.
+- backendserver/ is a standalone PHP+MySQL service: nested transactions must go through DB::tx (savepoint-safe); never call PDO beginTransaction directly inside another transaction.
+- Master Worker requests are HMAC-signed over "{ts}.{METHOD}.{path-with-query}.{sha256(body)}"; the signature path must include the query string in both signer and verifier.
+- Run backend tests with the API up (`php -S 127.0.0.1:8090 -t backendserver backendserver/index.php`) then `php backendserver/tests/run_tests.php` against a fresh lifeos MySQL database loaded from backendserver/database/*.sql.
