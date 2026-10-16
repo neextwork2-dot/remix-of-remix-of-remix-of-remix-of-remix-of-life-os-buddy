@@ -1,5 +1,5 @@
 // Browser-only client for the standalone PHP member API.
-const BASE = (import.meta.env.VITE_LIFEOS_API_URL as string | undefined) ?? "/backendserver/api";
+const BASE = (import.meta.env["VITE_LIFEOS_API_URL"] as string | undefined) ?? "/backendserver/api";
 const KEY = "lifeos_member_token";
 
 export const memberToken = {
@@ -22,7 +22,7 @@ export async function memberApi<T = unknown>(path: string, init: { method?: stri
       "Content-Type": "application/json",
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
-    body: init.body ? JSON.stringify(init.body) : undefined,
+    body: init.body ? JSON.stringify(init.body) : null,
   });
   let json: any = null;
   try {
