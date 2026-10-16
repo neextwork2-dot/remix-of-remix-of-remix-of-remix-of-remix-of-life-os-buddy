@@ -1,0 +1,24 @@
+/* Life OS brand overrides on top of the reference kit style sheets. */
+.lifeos-member .header_content.lifeos-banner { background: url(images/banner.jpg) no-repeat center center; background-size: cover; height: 200px; }
+.lifeos-member .profile_images { border: 1px solid #009541; padding: 10px; }
+.lifeos-member .profile_images table th, .lifeos-member .profile_images table td { border: 1px solid #009541; }
+.lifeos-member .profile_images table th { background: #009541; color: #FFFFFF; }
+.lifeos-member .right { text-align: right; }
+.lifeos-member .anchor_button { background: #009541; padding: 7px 10px; margin-left: 10px; border-radius: 5px; color: #FFFFFF !important; font-weight: bold !important; text-decoration: none !important; }
+.lifeos-member .site_scroll_bottom { background: #009541; width: 100%; position: fixed; bottom: 0; height: 30px; padding-top: 5px; }
+.lifeos-member .site_scroll { width: 96%; padding: 0 20px 10px 20px; overflow: hidden; }
+.lifeos-member .site_scroll_container { width: 100%; overflow: hidden; }
+.lifeos-member .site_scroll_container span { display: inline-block; margin-right: 35px; font-size: 14px; line-height: 20px; color: #FFFFFF; }
+.lifeos-member .lifeos-marquee { white-space: nowrap; animation: lifeosMarquee 35s linear infinite; padding-left: 100%; }
+@keyframes lifeosMarquee { to { transform: translateX(-100%); } }
+.lifeos-member #wrapper { padding-bottom: 50px; }
+.lifeos-member .tree-node { display: inline-block; text-align: center; min-width: 80px; }
+.lifeos-member .tree-node .avatar { width: 60px; height: 60px; border-radius: 50%; background: #e8f5ec; border: 2px solid #009541; display: inline-block; line-height: 60px; font-weight: bold; color: #009541; }
+.lifeos-member .tree-node.inactive .avatar { border-color: #AAA; color: #999; background: #f4f4f4; }
+@media (max-width: 1100px) {
+  .lifeos-member #wrapper, .lifeos-member .content_menu, .lifeos-member .content_full div { width: 100% !important; }
+  .lifeos-member .mid_image { width: auto; }
+  .lifeos-member .ddsmoothmenu ul li a { padding: 0 8px; margin-left: 0; font-size: 14px; }
+  .lifeos-member #main_member { overflow-x: auto; }
+  .lifeos-member .header_content.lifeos-banner { height: 120px; }
+}
