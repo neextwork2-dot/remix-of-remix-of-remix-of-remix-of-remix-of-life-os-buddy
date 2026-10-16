@@ -20,3 +20,6 @@
 - backendserver/ is a standalone PHP+MySQL service: nested transactions must go through DB::tx (savepoint-safe); never call PDO beginTransaction directly inside another transaction.
 - Master Worker requests are HMAC-signed over "{ts}.{METHOD}.{path-with-query}.{sha256(body)}"; the signature path must include the query string in both signer and verifier.
 - Run backend tests with the API up (`php -S 127.0.0.1:8090 -t backendserver backendserver/index.php`) then `php backendserver/tests/run_tests.php` against a fresh lifeos MySQL database loaded from backendserver/database/*.sql.
+- Member routes use a separate scoped reference shell and client-hydrated PHP bearer session; private account queries run only after the server validates the session, so public pages and SSR contain no member financial data.
+- The member API base is configured with VITE_LIFEOS_API_URL (default /backendserver/api); Vite proxies this prefix to the standalone PHP service only during development.
+- Member profile changes use the existing user_profiles table and locked user row, preserving the source legacy schema rather than replacing it.
