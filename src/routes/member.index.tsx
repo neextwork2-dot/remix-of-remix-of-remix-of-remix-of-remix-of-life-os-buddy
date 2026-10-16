@@ -50,7 +50,7 @@ function Dashboard() {
                     </td>
                   </tr>
                   {rows.map(([k, v]) => (
-                    <tr key={k}><th width="50%">{k}</th><td>{v}</td></tr>
+                    <tr key={k}><th style={{ width: "50%" }}>{k}</th><td>{v}</td></tr>
                   ))}
                 </tbody>
               </table>

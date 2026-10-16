@@ -51,7 +51,7 @@ function Profile() {
                 <tr><td>Email Address</td><td>:</td><td><input type="text" readOnly value={me?.email ?? ""} /></td></tr>
                 <tr><td>Cell Number</td><td>:</td><td><input type="text" readOnly value={me?.phone ?? ""} /></td></tr>
                 <tr><td valign="top">Present Address</td><td valign="top">:</td>
-                  <td><textarea rows={4} style={{ width: 300, border: "1px solid #AAA", background: "#FAFAFA" }} value={f.address_current ?? ""} onChange={(e) => setF({ ...f, address_current: e.target.value })} /></td></tr>
+                  <td><textarea rows={4} style={{ width: 300, border: "1px solid #AAA", background: "#FAFAFA" }} value={f["address_current"] ?? ""} onChange={(e) => setF({ ...f, address_current: e.target.value })} /></td></tr>
                 <tr><td /><td /><td><input type="submit" value="Update Profile" /></td></tr>
               </tbody>
             </table>

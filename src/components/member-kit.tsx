@@ -138,7 +138,7 @@ export function DataTable({ head, rows, empty = "No records found" }: { head: st
   );
 }
 
-export function Msg({ ok, text }: { ok?: boolean; text: string | null }) {
+export function Msg({ ok, text }: { ok?: boolean | undefined; text: string | null }) {
   if (!text) return null;
   return <div id="message" style={{ color: ok ? "#009541" : "#C00", fontWeight: "bold", margin: "10px 0" }}>{text}</div>;
 }
