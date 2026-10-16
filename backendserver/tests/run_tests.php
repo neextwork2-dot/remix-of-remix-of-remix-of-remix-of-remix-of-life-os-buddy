@@ -106,14 +106,14 @@ $D = registerAndActivate('01700000004', $B['referral_code'], $adminToken);
 // A: 200 + 110 + 75 = 385. B: 400 + 100 + 187.5 = 687.5. C: cashback only.
 $wa = api('GET', '/api/member/wallet', null, $tokenA)['json']['data'];
 $wb = api('GET', '/api/member/wallet', null, $B['token'])['json']['data'];
-check('A wallet total 385', abs(($wa['withdrawable'] ?? 0) - 385.0) < 0.01, 'got ' . ($wa['withdrawable'] ?? 'null'));
-check('B wallet total 687.5', abs(($wb['withdrawable'] ?? 0) - 687.5) < 0.01, 'got ' . ($wb['withdrawable'] ?? 'null'));
+check('A wallet total 310', abs(($wa['withdrawable'] ?? 0) - 310.0) < 0.01, 'got ' . ($wa['withdrawable'] ?? 'null'));
+check('B wallet total 725', abs(($wb['withdrawable'] ?? 0) - 725.0) < 0.01, 'got ' . ($wb['withdrawable'] ?? 'null'));
 check('A referral 200', abs(($wa['by_type']['REFERRAL'] ?? 0) - 200.0) < 0.01, 'got ' . ($wa['by_type']['REFERRAL'] ?? 'none'));
 check('B referral 400', abs(($wb['by_type']['REFERRAL'] ?? 0) - 400.0) < 0.01, 'got ' . ($wb['by_type']['REFERRAL'] ?? 'none'));
 check('A generation 110', abs(($wa['by_type']['GENERATION'] ?? 0) - 110.0) < 0.01, 'got ' . ($wa['by_type']['GENERATION'] ?? 'none'));
 check('B generation 100', abs(($wb['by_type']['GENERATION'] ?? 0) - 100.0) < 0.01, 'got ' . ($wb['by_type']['GENERATION'] ?? 'none'));
-check('B matching 187.5', abs(($wb['by_type']['MATCHING'] ?? 0) - 187.5) < 0.01, 'got ' . ($wb['by_type']['MATCHING'] ?? 'none'));
-check('A matching 75', abs(($wa['by_type']['MATCHING'] ?? 0) - 75.0) < 0.01, 'got ' . ($wa['by_type']['MATCHING'] ?? 'none'));
+check('B matching 225', abs(($wb['by_type']['MATCHING'] ?? 0) - 225.0) < 0.01, 'got ' . ($wb['by_type']['MATCHING'] ?? 'none'));
+check('A matching 0 (single-leg subtree never matches)', abs(($wa['by_type']['MATCHING'] ?? 0) - 0.0) < 0.01, 'got ' . ($wa['by_type']['MATCHING'] ?? 'none'));
 $wc = api('GET', '/api/member/wallet', null, $C['token'])['json']['data'];
 check('C withdrawable 0, cashback 100 service-only', abs($wc['withdrawable']) < 0.01 && abs($wc['cashback_service_only'] - 100.0) < 0.01, 'got wd=' . $wc['withdrawable'] . ' cb=' . $wc['cashback_service_only']);
 
@@ -123,18 +123,21 @@ $paid = array_values(array_filter($mev, fn ($e) => $e['payout_status'] === 'PAID
 check('B has 2 paid matching events', count($paid) === 2, 'got ' . count($paid));
 $ranks = array_values(array_map(fn ($e) => (float) $e['calculated_payout'], $paid));
 sort($ranks);
-check('B events are 150 and 37.5 (sale counter, halving)', $ranks === [37.5, 150.0], json_encode($ranks));
+check('B events are 150 and 75 (halving, sale counter)', $ranks === [75.0, 150.0], json_encode($ranks));
 $amev = api('GET', '/api/member/matching', null, $tokenA)['json']['data'];
 $aev = array_values(array_filter($amev, fn ($e) => $e['payout_status'] === 'PAID'));
-check('A has 1 paid matching event of 75', count($aev) === 1 && abs($aev[0]['calculated_payout'] - 75.0) < 0.01, json_encode($aev));
-check('A event is event_number 2 of its sale', ($aev[0]['event_number'] ?? 0) === 2, json_encode($aev[0] ?? []));
+check('A has no matching events in wave 1 (single-leg subtree)', count($aev) === 0, 'got ' . count($aev));
+$types = array_map(fn ($e) => $e['selected_type'] ?? null, $paid);
+$nums = array_map(fn ($e) => (int) ($e['event_number'] ?? 0), $paid);
+sort($nums);
+check('B events numbered 1,2 on one sale, different bill types', $nums === [1, 2] && count(array_unique($types)) === 2, json_encode([$nums, $types]));
 
 // ---- Rank ----
 $rr = api('GET', '/api/member/rank', null, $B['token'])['json']['data'];
 check('B rank Member at 2 matchings', ($rr['current']['name'] ?? '') === 'Member', json_encode($rr['current'] ?? null));
 check('B lifetime matchings = 2', ($rr['lifetime_matchings'] ?? 0) === 2, 'got ' . ($rr['lifetime_matchings'] ?? 0));
 $rr = api('GET', '/api/member/rank', null, $tokenA)['json']['data'];
-check('A rank Member at 1 matching', ($rr['current']['name'] ?? '') === 'Member', json_encode($rr['current'] ?? null));
+check('A has no rank row yet (never earned a matching)', ($rr['current'] ?? 'x') === null, json_encode($rr['current'] ?? null));
 
 // ---- Enrollment tree ----
 $et = api('GET', '/api/member/tree/enrollment', null, $B['token'])['json']['data'];
