@@ -137,7 +137,7 @@ $rr = api('GET', '/api/member/rank', null, $B['token'])['json']['data'];
 check('B rank Member at 2 matchings', ($rr['current']['name'] ?? '') === 'Member', json_encode($rr['current'] ?? null));
 check('B lifetime matchings = 2', ($rr['lifetime_matchings'] ?? 0) === 2, 'got ' . ($rr['lifetime_matchings'] ?? 0));
 $rr = api('GET', '/api/member/rank', null, $tokenA)['json']['data'];
-check('A has no rank row yet (never earned a matching)', ($rr['current'] ?? 'x') === null, json_encode($rr['current'] ?? null));
+check('A has no rank row yet (never earned a matching)', ($rr['current'] ?? []) === null || $rr['current'] === null, json_encode($rr['current'] ?? null));
 
 // ---- Enrollment tree ----
 $et = api('GET', '/api/member/tree/enrollment', null, $B['token'])['json']['data'];
